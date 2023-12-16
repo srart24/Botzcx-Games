@@ -1,0 +1,51 @@
+{
+  "name": "Botzcx-Games",
+  "version": "1.0.0",
+  "description": "Botzcx-Games adalah bot games seru untuk obrolan yang lebih asyik!",
+  "main": "app.js",
+  "type": "commonjs",
+  "directories": {
+    "lib": "lib",
+    "data": "data",
+    "cmd": "cmd",
+    "src": "src",
+    "sampah": "sampah"
+  },
+  "scripts": {
+    "start": "node index.js --qr"
+  },
+  "author": "@srart24",
+  "license": "Apache-2.0 license",
+  "homepage": "https://github.com/srart24/Botzcx-Games",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srart24/Botzcx-Games.git"
+  },
+  "issues": "https://github.com/srart24/Botzcx-Games/issues",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.5.0",
+    "@adiwajshing/keyed-db": "^0.2.4",
+    "@srart24/scraper": "^0.0.3",
+    "@hapi/boom": "^10.0.1",
+    "awesome-phonenumber": "^5.9.0",
+    "axios": "^1.4.0",
+    "chalk": "^4.1.2",
+    "cheerio": "^1.0.0-rc.12",
+    "cookie": "^0.5.0",
+    "file-type": "^16.5.3",
+    "fluent-ffmpeg": "^2.1.2",
+    "form-data": "^4.0.0",
+    "human-readable": "^0.2.1",
+    "similarity": "^1.2.1",
+    "jsdom": "^22.1.0",
+    "jimp": "^0.16.13",
+    "moment-timezone": "^0.5.43",
+    "wa-sticker-formatter": "^4.3.2",
+    "qrcode-terminal": "^0.12.0",
+    "node-fetch": "^2.6.11",
+    "express": "^4.18.2",
+    "performance-now": "^2.1.0",
+    "pino": "^8.14.1",
+    "set-cookie": "^0.0.4"
+  }
+}
