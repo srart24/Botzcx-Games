@@ -55,7 +55,10 @@ srart24_Fnc_isiSaldoAtm,
 srart24_Fnc_CekAtm, 
 srart24_Fnc_tarikAtm, 
 srart24_Fnc_Tfatm, 
-srart24_daftar
+srart24_daftar, 
+srart24_Fnc_Claim, 
+srart24_Fnc_createSrdb, 
+srart24_Fnc_processCode
 } = require("../lib/rpg.js")
 
 const {
@@ -78,10 +81,12 @@ module.exports = srart24 = async (srart24, m, msg, chatUpdate, store) => {
 		const prefix = prefa ? /^[Â°â€¢Ï€Ã·Ã—Â¶âˆ†Â£Â¢â‚¬Â¥Â®â„¢+âœ“_=|~!?@#$%^&.Â©^]/gi.test(body) ? body.match(/^[Â°â€¢Ï€Ã·Ã—Â¶âˆ†Â£Â¢â‚¬Â¥Â®â„¢+âœ“_=|~!?@#$%^&.Â©^]/gi)[0] : "" : prefa ?? global.prefix
 		
 		const mText = typeof m.text === "string" ? m.text : "";
-		const prefixes = ['.', '?', '&', '%', '$', '#', '@', '!'];
+		const prefixes = ['.', '?', '&', '%', '/', '#', '!'];
 		const regexPattern = new RegExp(`^[${prefixes.join('')}]\\s*(\\S+)`);
 		const match = mText.match(regexPattern);
 		const cmd = match ? match[1].toLowerCase() : mText.split(/\s+/)[0].toLowerCase();
+	
+		let comd = prefixes.find(pfx => mText.startsWith(pfx)) ? mText.slice(1) : null;
 
 		const command = body.replace(prefix, "").trim().split(/ +/).shift().toLowerCase()
 		const args = body.trim().split(/ +/).slice(1)
@@ -149,16 +154,10 @@ module.exports = srart24 = async (srart24, m, msg, chatUpdate, store) => {
 		
 		// Function
 	
-
-
-
-
-
-
 		
 		global.mMain = ['menu', 'runtime', 'ping', 'owner', 'banlist', 'stiker', 'get'];
 		global.mGroup = ['gc', 'welcome', 'antilink', 'antibot', 'revoke', 'setppgc', 'linkgc', 'tagall', 'hidetag', 'promote', 'demote', 'kick', 'linkgc', 'opentime', 'closetime'];
-		global.mRpg = ['tembak', 'terima', 'putus', 'tolak', 'ikhlasin', 'carikerja', 'kerja', 'atm', 'buatatm', 'nabung', 'tarik', 'transfer', 'bansos', 'adventure', 'berburu', 'mancing', 'gacha', 'heal', 'hewan', 'feed', 'ngepet', 'inv', 'jual', 'beli', 'upgrade', 'bom', 'tpk'];
+		global.mRpg = ['tembak', 'terima', 'putus', 'tolak', 'ikhlasin', 'carikerja', 'kerja', 'claim', 'atm', 'buatatm', 'nabung', 'tarik', 'transfer', 'bansos', 'adventure', 'berburu', 'mancing', 'gacha', 'heal', 'hewan', 'feed', 'ngepet', 'inv', 'jual', 'beli', 'upgrade', 'bom', 'tpk'];
 		global.mOwner = ['public', 'self', 'ban', 'unban', 'block', 'unblock', 'setppbot', 'clearsession', 'getsession', 'join', 'offbot'];
 		global.mgmys = ['family100', 'caklontong', 'asahotak', 'susunkata', 'tebakkata', 'siapakahaku', 'tekateki', 'tebakkalimat', 'tebaklirik', 'tebakbendera', 'tebakgambar', 'tebakanime', 'tebakgame']
 		
@@ -201,8 +200,10 @@ module.exports = srart24 = async (srart24, m, msg, chatUpdate, store) => {
 		
 		const semuaFitur = [...global.mMain, ...global.mGroup, ...global.mRpg, ...global.mOwner, ...global.mgmys];
 		const TotalFitur = semuaFitur.length;
+		
 
-		switch (command) {
+
+		switch (cmd) {
 			
 			case "totalfitur": {
 				m.reply(`Total Fitur Saat Ini : ${TotalFitur}`)
@@ -219,13 +220,13 @@ module.exports = srart24 = async (srart24, m, msg, chatUpdate, store) => {
 			
 			case "sticker": case "stiker": case "s":
 				{
-					if (!quoted) return m.reply(`Reply to Video/Image With Caption ${prefix + command}`)
+					if (!quoted) return m.reply(`reply foto dan ketik ${prefix + command}`)
 					if (/image/.test(mime)) {
 						let media = await quoted.download()
 						let stc = await tostc(media, false, global.packname, global.author)
 						m.Stc(stc)
 					} else {
-						return m.reply(`Send Images/Videos With Captions ${prefix + command}\nVideo Duration 1-9 Seconds`)
+						return m.reply(`reply foto dan ketik ${prefix + command}`)
 					}
 				}
 				break
@@ -270,9 +271,26 @@ module.exports = srart24 = async (srart24, m, msg, chatUpdate, store) => {
 				
 				
 	// ]======RPG Fitur ======[
+	
+	
+			case "getref": {
+				if(!isDaftar) return m.reply(Responya.reg)
+				if (!m.isGroup) return m.reply(Responya.group)
+				if(!args[0]) return m.reply("masukkan kode")
+				srart24_Fnc_processCode(m, args[0]) 
+			 } break
+			
+			case "cdrf": {
+				if (!isOwners) return m.reply(Responya.owner)
+				srart24_Fnc_createSrdb(m, text, prefix, command)
+			} break
 			
 			case "daftar": {
 					srart24_daftar(m, text)
+			} break
+			
+			case "claim": {
+					srart24_Fnc_Claim(m, msToDate)
 			} break
 				
 			case "adventure": {
@@ -999,10 +1017,15 @@ Rp.${uang}
       				db.data.users[m.sender].srart24_uang += transferAmount;
       				db.data.users[m.sender].srart24_atm -= transferAmount;
  				}
+ 
+ 			  if (comd && !checkTextInArrays(cmd)) {
+ 					return m.reply(`command *${prefix + cmd}* Tidak Ada Di Menu\nMakanya Baca Menu Nya Sayangku 🥰🥰🥰`)
+ 			}
 
 		}
 	} catch (err) {
 		srart24.reply(cNomor + "@s.whatsapp.net", util.format(err), m)
+		m.reply("Error Cuy")
 		console.log(util.format(err))
 	}
 }
